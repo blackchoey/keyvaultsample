@@ -1,11 +1,11 @@
 param simpleAuthWebAppName string
 param m365TenantId string
 param m365ClientId string
-@secure()
-param m365ClientSecret string
 param m365ApplicationIdUri string
 param oauthAuthorityHost string
 param simpelAuthPackageUri string
+param keyvaultName string
+param m365ClientSecretKvName string
 
 param frontendHostingStorageEndpoint string
 
@@ -32,7 +32,7 @@ resource simpleAuthWebAppSettings 'Microsoft.Web/sites/config@2018-02-01' = {
     ALLOWED_APP_IDS: authorizedClientApplicationIds
     IDENTIFIER_URI: m365ApplicationIdUri
     CLIENT_ID: m365ClientId
-    CLIENT_SECRET: m365ClientSecret
+    CLIENT_SECRET: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${m365ClientSecretKvName})'
     OAUTH_AUTHORITY: oauthAuthority
     TAB_APP_ENDPOINT: frontendHostingStorageEndpoint
   }

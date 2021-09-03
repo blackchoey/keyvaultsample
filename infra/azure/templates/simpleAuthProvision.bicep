@@ -1,6 +1,7 @@
 param sku string
 param simpleAuthServerFarmsName string
 param simpleAuthWebAppName string
+param identityId string
 
 resource simpleAuthServerFarms 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: simpleAuthServerFarmsName
@@ -14,7 +15,7 @@ resource simpleAuthServerFarms 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource simpleAuthWebApp 'Microsoft.Web/sites@2020-06-01' = {
+resource simpleAuthWebApp 'Microsoft.Web/sites@2020-12-01' = {
   kind: 'app'
   name: simpleAuthWebAppName
   location: resourceGroup().location
@@ -25,6 +26,13 @@ resource simpleAuthWebApp 'Microsoft.Web/sites@2020-06-01' = {
       alwaysOn: false
       http20Enabled: false
       numberOfWorkers: 1
+    }
+    keyVaultReferenceIdentity: identityId
+  }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${identityId}':{}
     }
   }
 }

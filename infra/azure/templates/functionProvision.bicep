@@ -1,6 +1,7 @@
 param functionServerfarmsName string
 param functionAppName string
 param functionStorageName string
+param identityId string
 
 resource functionServerfarms 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: functionServerfarmsName
@@ -11,12 +12,19 @@ resource functionServerfarms 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
+resource functionApp 'Microsoft.Web/sites@2020-12-01' = {
   name: functionAppName
   kind: 'functionapp'
   location: resourceGroup().location
   properties: {
     serverFarmId: functionServerfarms.id
+    keyVaultReferenceIdentity: identityId
+  }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${identityId}':{}
+    }
   }
 }
 

@@ -8,12 +8,29 @@ param m365OauthAuthorityHost string
 param function_serverfarmsName string = '${resourceBaseName}-function-serverfarms'
 param function_webappName string = '${resourceBaseName}-function-webapp'
 param function_storageName string = 'functionstg${uniqueString(resourceBaseName)}'
-param simpleAuth_sku string = 'F1'
+param simpleAuth_sku string = 'B1'
 param simpleAuth_serverFarmsName string = '${resourceBaseName}-simpleAuth-serverfarms'
 param simpleAuth_webAppName string = '${resourceBaseName}-simpleAuth-webapp'
 param simpleAuth_packageUri string = 'https://github.com/OfficeDev/TeamsFx/releases/download/simpleauth@0.1.0/Microsoft.TeamsFx.SimpleAuth_0.1.0.zip'
+param managedIdentityName string = '${resourceBaseName}-msi'
+param keyvaultName string = '${resourceBaseName}keyvault'
 
 var m365ApplicationIdUri = 'api://${frontendHostingProvision.outputs.domain}/${m365ClientId}'
+
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+  name: managedIdentityName
+  location: resourceGroup().location
+}
+
+module keyVaultProvision './keyVaultProvision.bicep' = {
+  name: 'keyVaultProvision'
+  params: {
+    keyvaultName: keyvaultName
+    msiTenantId: managedIdentity.properties.tenantId
+    msiObjectId: managedIdentity.properties.principalId
+    m365ClientSecret: m365ClientSecret
+  }
+}
 
 module frontendHostingProvision './frontendHostingProvision.bicep' = {
   name: 'frontendHostingProvision'
@@ -21,12 +38,14 @@ module frontendHostingProvision './frontendHostingProvision.bicep' = {
     frontendHostingStorageName: frontendHosting_storageName
   }
 }
+
 module functionProvision './functionProvision.bicep' = {
   name: 'functionProvision'
   params: {
     functionAppName: function_webappName
     functionServerfarmsName: function_serverfarmsName
     functionStorageName: function_storageName
+    identityId: managedIdentity.id
   }
 }
 module functionConfiguration './functionConfiguration.bicep' = {
@@ -38,11 +57,12 @@ module functionConfiguration './functionConfiguration.bicep' = {
     functionAppName: function_webappName
     functionStorageName: function_storageName
     m365ClientId: m365ClientId
-    m365ClientSecret: m365ClientSecret
     m365TenantId: m365TenantId
     m365ApplicationIdUri: m365ApplicationIdUri
     m365OauthAuthorityHost: m365OauthAuthorityHost
     frontendHostingStorageEndpoint: frontendHostingProvision.outputs.endpoint
+    keyvaultName: keyvaultName
+    m365ClientSecretKvName: keyVaultProvision.outputs.m365ClientSecretName
   }
 }
 module simpleAuthProvision './simpleAuthProvision.bicep' = {
@@ -51,6 +71,7 @@ module simpleAuthProvision './simpleAuthProvision.bicep' = {
     simpleAuthServerFarmsName: simpleAuth_serverFarmsName
     simpleAuthWebAppName: simpleAuth_webAppName
     sku: simpleAuth_sku
+    identityId: managedIdentity.id
   }
 }
 module simpleAuthConfiguration './simpleAuthConfiguration.bicep' = {
@@ -61,12 +82,13 @@ module simpleAuthConfiguration './simpleAuthConfiguration.bicep' = {
   params: {
     simpleAuthWebAppName: simpleAuth_webAppName
     m365ClientId: m365ClientId
-    m365ClientSecret: m365ClientSecret
     m365ApplicationIdUri: m365ApplicationIdUri
     frontendHostingStorageEndpoint: frontendHostingProvision.outputs.endpoint
     m365TenantId: m365TenantId
     oauthAuthorityHost: m365OauthAuthorityHost
     simpelAuthPackageUri: simpleAuth_packageUri
+    keyvaultName: keyvaultName
+    m365ClientSecretKvName: keyVaultProvision.outputs.m365ClientSecretName
   }
 }
 
