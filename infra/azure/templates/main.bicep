@@ -13,7 +13,7 @@ param simpleAuth_serverFarmsName string = '${resourceBaseName}-simpleAuth-server
 param simpleAuth_webAppName string = '${resourceBaseName}-simpleAuth-webapp'
 param simpleAuth_packageUri string = 'https://github.com/OfficeDev/TeamsFx/releases/download/simpleauth@0.1.0/Microsoft.TeamsFx.SimpleAuth_0.1.0.zip'
 param managedIdentityName string = '${resourceBaseName}-msi'
-param keyvaultName string = '${resourceBaseName}keyvault'
+param keyVaultName string = '${resourceBaseName}keyvault'
 
 var m365ApplicationIdUri = 'api://${frontendHostingProvision.outputs.domain}/${m365ClientId}'
 
@@ -25,7 +25,7 @@ resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-
 module keyVaultProvision './keyVaultProvision.bicep' = {
   name: 'keyVaultProvision'
   params: {
-    keyvaultName: keyvaultName
+    keyVaultName: keyVaultName
     msiTenantId: managedIdentity.properties.tenantId
     msiObjectId: managedIdentity.properties.principalId
     m365ClientSecret: m365ClientSecret

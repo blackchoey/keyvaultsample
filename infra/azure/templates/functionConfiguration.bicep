@@ -6,6 +6,7 @@ param m365ClientSecret string
 param m365TenantId string
 param m365ApplicationIdUri string
 param m365OauthAuthorityHost string
+
 param frontendHostingStorageEndpoint string
 
 var teamsMobileOrDesktopAppClientId = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'

@@ -1,4 +1,4 @@
-param keyvaultName string
+param keyVaultName string
 param msiTenantId string
 param msiObjectId string
 @secure()
@@ -7,7 +7,7 @@ param m365ClientSecret string
 var m365ClientSecretName = 'm365ClientSecret'
 
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
-  name: keyvaultName
+  name: keyVaultName
   location: resourceGroup().location
   properties: {
     tenantId: msiTenantId
@@ -41,4 +41,4 @@ resource clientSecretKv 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = if (len
   }
 }
 
-output m365ClientSecretReference string = '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${m365ClientSecretName})'
+output m365ClientSecretReference string = '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=${m365ClientSecretName})'
