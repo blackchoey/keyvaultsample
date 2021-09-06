@@ -57,12 +57,11 @@ module functionConfiguration './functionConfiguration.bicep' = {
     functionAppName: function_webappName
     functionStorageName: function_storageName
     m365ClientId: m365ClientId
+    m365ClientSecret: keyVaultProvision.outputs.m365ClientSecretReference
     m365TenantId: m365TenantId
     m365ApplicationIdUri: m365ApplicationIdUri
     m365OauthAuthorityHost: m365OauthAuthorityHost
     frontendHostingStorageEndpoint: frontendHostingProvision.outputs.endpoint
-    keyvaultName: keyvaultName
-    m365ClientSecretKvName: keyVaultProvision.outputs.m365ClientSecretName
   }
 }
 module simpleAuthProvision './simpleAuthProvision.bicep' = {
@@ -82,13 +81,12 @@ module simpleAuthConfiguration './simpleAuthConfiguration.bicep' = {
   params: {
     simpleAuthWebAppName: simpleAuth_webAppName
     m365ClientId: m365ClientId
+    m365ClientSecret: keyVaultProvision.outputs.m365ClientSecretReference
     m365ApplicationIdUri: m365ApplicationIdUri
     frontendHostingStorageEndpoint: frontendHostingProvision.outputs.endpoint
     m365TenantId: m365TenantId
     oauthAuthorityHost: m365OauthAuthorityHost
     simpelAuthPackageUri: simpleAuth_packageUri
-    keyvaultName: keyvaultName
-    m365ClientSecretKvName: keyVaultProvision.outputs.m365ClientSecretName
   }
 }
 

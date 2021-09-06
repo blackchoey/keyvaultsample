@@ -41,4 +41,4 @@ resource clientSecretKv 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = if (len
   }
 }
 
-output m365ClientSecretName string = m365ClientSecretName
+output m365ClientSecretReference string = '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${m365ClientSecretName})'
