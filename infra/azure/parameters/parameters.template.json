@@ -16,6 +16,9 @@
     },
     "m365OauthAuthorityHost": {
       "value": "{{FX_RESOURCE_AAD_APP_FOR_TEAMS__OAUTHHOST}}"
+    },
+    "simpleAuth_sku": {
+      "value": "{{CUSTOMIZED_SKU_NAME}}"
     }
   }
 }
